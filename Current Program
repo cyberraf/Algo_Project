@@ -1,0 +1,292 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+// Prototypes
+void printArray(int[], int);
+void randomArray(int[], int);
+void writeArray(ofstream&, int[], int);
+void almostSort(ofstream&, int[], int);
+void randomSort(ofstream&, int[], int);
+void reverseSort(ofstream&, int[], int);
+void duplicateSort(ofstream&, int[], int);
+void heapSort(int [], int);
+void heapify(int [], int, int);
+
+int main()
+{
+   // -------------  Rafik's part:  --------------
+   ifstream inFile;
+   int numToSort;
+   string algName, filename;
+
+   // Ask for length of data set
+   cout << "Enter the number of randomnumbers to process (sort) <= 100,000: ";
+   cin >> numToSort;
+
+   int array [numToSort];
+
+   // Can only be done in main function
+   // Creating 4 .txt files with respective data
+   ofstream almSort;
+   almSort.open("almostS.txt");
+    almostSort(almSort, array, numToSort);
+   almSort.close();
+
+   ofstream randSort;
+   randSort.open("randomS.txt");
+   randomSort(randSort, array, numToSort);
+   randSort.close();
+
+   ofstream revSort;
+   revSort.open("reverseS.txt");
+   reverseSort(revSort, array, numToSort);
+   revSort.close();
+
+   ofstream dupSort;
+   dupSort.open("duplicates.txt");
+   duplicateSort(dupSort, array, numToSort);
+   dupSort.close();
+   //cout << "Done creating data set...\n\n";
+
+   cout << "\n(selection, exchange, bubble, insertion, merge, quick, heap)" << endl
+        << "Enter the name of the algorithm you want to test: ";
+   cin >> algName;
+   cout << endl;
+
+   cout << "(almostS, randomS, reverseS, or duplicates)" << endl
+        << "Enter the name of the dataset: ";
+   cin >> filename;
+   cout << endl;
+   
+   inFile.open(filename + ".txt");
+
+   if (inFile.fail())
+   {
+       cerr <<"No such file!" << endl;
+       exit(1);
+   }// end if statement
+
+   // Read in data set from respective .txt file
+   int num;
+   for (int i = 0; inFile >> num; i++){
+      array[i] = num;
+   }
+
+   cout << "Running " << algName << " sort..." << endl;
+   if (algName == "selection"){
+      // Call selection sort
+      cout << "selection sort called" << endl;
+   }
+
+   else if (algName == "exchange"){
+      // Call exchange sort
+      cout << "exchange sort called" << endl;
+   }
+
+   else if (algName == "bubble"){
+      // Call bubble sort
+      cout << "bubble sort called" << endl;
+   }
+   
+   else if (algName == "merge"){
+      // Call merge sort
+      cout << "merge sort called" << endl;
+   }
+
+   else if (algName == "quick"){
+      // Call quick sort
+      cout << "quick sort called" << endl;
+   }
+
+   else if (algName == "heap"){
+      // Call heap sort
+      heapSort(array, numToSort); // TODO: Print time & # of basic operations
+
+      // Printing array
+      printArray(array, numToSort);
+   }
+
+   cout << endl;
+   inFile.close();
+
+   return 0;
+}// end of main
+
+// Prints current sorted array onto console
+void printArray(int array[], int len)
+{
+   cout << "Printing array...";
+   for (int i = 0; i < len; i++){
+      if (i % 15 == 0){
+         cout << "\n";
+      }
+
+      cout << array[i] << " ";
+   }
+}
+
+// Writes current array onto the current .txt file
+void writeArray(ofstream &OutputFile, int array[], int len)
+{
+   for (int i = 0; i < len; i++){
+      OutputFile << array[i] << " ";
+   }
+}
+
+// Code taken from the first HW Assignment
+void randomArray(int array[], int len)
+{
+   srand(time(0));
+   for (int i = 0; i < len; i++){
+      int numRand = rand() % len;
+      array[i] = numRand;
+   }
+}
+
+/* _________  SORT CODE  ___________ */
+// ALMOST SORTED CODE
+void almostSort(ofstream &OutputFile, int array[], int len)
+{
+   // Declaring variables
+   int numRandSwitch = 4; // TODO: Make const global variable
+
+   randomArray(array, len);
+
+   // TODO: Change this to a more efficient type of sort
+   // Make it sorted first (using bubble sort for now)
+   for (int i = 0; i < len; i++){
+      for (int j = 0; j < len - i - 1; j++){
+         if (array[j] > array[j+1]){
+            int temp = array[j];
+            array[j] = array[j+1];
+            array[j+1] = temp;
+         }
+      }
+   }
+
+   //srand(time(0));
+   int prevElement = -1, currElement = -1;
+
+   for (int i = 0; i < numRandSwitch; i++){
+      currElement = rand() % len;
+
+      while (currElement == prevElement){ // Ensures random number is always different
+         currElement = rand() % len;
+      }
+
+      if (!(i % 2 == 0)){
+         int temp = array[prevElement];
+         array[prevElement] = array[currElement];
+         array[currElement] = temp;
+      }
+
+      else {
+         prevElement = currElement;
+      }
+   }
+
+   writeArray(OutputFile, array, len);
+}
+
+// RANDOM SORT CODE
+// Code taken from the first HW Assignment
+void randomSort(ofstream &OutputFile, int array[], int len)
+{
+   randomArray(array, len);
+   writeArray(OutputFile, array, len);
+}
+
+// REVERSE SORT CODE
+void reverseSort(ofstream &OutputFile, int array[], int len)
+{
+   randomArray(array, len);
+
+   // TODO: Change this to a more efficient type of sort
+   // Make it sorted first (using bubble sort for now)
+   for (int i = 0; i < len; i++){
+      for (int j = 0; j < len - i - 1; j++){
+         if (array[j] > array[j+1]){
+            int temp = array[j];
+            array[j] = array[j+1];
+            array[j+1] = temp;
+         }
+      }
+   }
+
+   int start = 0, end = len - 1;
+
+   // TODO: Make more concise or make a new function if necessary
+   // Reverses current array
+   while (start < end)
+   {
+      int temp = array[start];
+      array[start] = array[end];
+      array[end] = temp;
+      start++;
+      end--;
+   }
+
+   writeArray(OutputFile, array, len); // Writes now reversed array onto .txt file
+}
+
+void duplicateSort(ofstream &OutputFile, int array[], int len)
+{
+   // Random array code: (edited)
+   //srand(time(0));
+   for (int i = 0; i < len; i++){
+      int numRand = rand() % len;
+      int numDup = rand() % (int)(len * 0.1); // TODO: Turn into const global variable
+      for (int j = 0; j < numDup; j++){ //
+         array[j] = numRand;
+         i++;
+      }
+   }
+
+   writeArray(OutputFile, array, len);
+}
+
+
+// To heapify a subtree rooted with node i which is
+// an index in arr[]. n is size of heap
+void heapify(int arr[], int n, int i)
+{
+    int largest = i; // Initialize largest as root
+    int l = 2 * i + 1; // left = 2*i + 1
+    int r = 2 * i + 2; // right = 2*i + 2
+
+    // If left child is larger than root
+    if (l < n && arr[l] > arr[largest])
+        largest = l;
+
+    // If right child is larger than largest so far
+    if (r < n && arr[r] > arr[largest])
+        largest = r;
+
+    // If largest is not root
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+
+        // Recursively heapify the affected sub-tree
+        heapify(arr, n, largest);
+    }
+}
+
+// main function to do heap sort
+void heapSort(int arr[], int n)
+{
+    // Build heap (rearrange array)
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    // One by one extract an element from heap
+    for (int i = n - 1; i > 0; i--) {
+        // Move current root to end
+        swap(arr[0], arr[i]);
+
+        // call max heapify on the reduced heap
+        heapify(arr, i, 0);
+    }
+}
