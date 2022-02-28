@@ -1,0 +1,260 @@
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <sys/time.h>
+#include <string>
+#include <sys/time.h>
+
+using namespace std;
+
+
+void loadArray(string, int[], int);
+void sort(int, int, int[]);
+void outputArray(int[], int);
+void bubbleSortV1(int [], int);
+void mergeSort(int [], int, int);
+void merge(int [], int, int, int);
+void swap (int &a, int &b);
+   timeval startTime, stopTime;
+   double start, stop, diff;
+long i_cnt = 0;  // used to count the number of times an "if" statement is executed
+long r_cnt = 0;  // used to count the number of times mergeSort is called recursively
+long m_cnt = 0;  // used to count the number of times an element is moved somewhere
+
+//largest possible size of the array
+int MAX = 100000;
+
+
+int main()
+{
+   int array[MAX];
+   int numNums;
+   string filename = "";
+   int typeSort;
+
+    // user is prompted to input the file name
+    cout << "Enter the name of the file containing the random numbers: ";
+    cin >> filename;
+
+    ifstream my_file;
+    my_file.open(filename);
+    if (!my_file)
+    {
+        cout << "No such file!";
+    }
+    else
+    {
+       // user is prompted to input the number of random nnumbers to process
+       cout << endl << endl;
+       cout << "Enter the number of random numbers to process (sort) <= 100,000: ";
+       cin >> numNums;
+
+    // user is prompted for type of sort to analyze
+    /* 1-bubble sort version 1
+       2-merge sort
+    */
+       cout << endl << endl;
+       cout << "Type of sort to analyze: " << endl << "(1)Bubble Sort (2)Merge Sort" << endl;
+       cin >> typeSort;
+       cout << endl;
+
+
+      loadArray(filename, array, numNums);
+
+      sort(typeSort, numNums, array);
+    }
+   return 0;
+}
+
+
+//array is loaded using the file name obtained in the main function through user input
+//we take "numNums" number of integers from the file and insert them into our array
+void loadArray(string filename, int array[], int numNums)
+{
+    ifstream my_file;
+    my_file.open(filename);
+        for (int i = 0; i < numNums; i++)
+        {
+            my_file >> array[i];
+        }
+    my_file.close();
+}
+
+//this function utilizes the user's input of their sorting choice
+      // 1-bubble sort version 1
+                                                                                                                                                          84,1          19%
+
+      // 2-merge sort
+//the method of sorting is followed through, time is recorded before and after to determine run time, and results are output
+void sort(int typeSort, int numNums, int array[])
+{
+        // BUBBLE SORT
+        if (typeSort == 1)
+        {
+            gettimeofday(&startTime, NULL);
+
+            //bubble sort version 1
+            bubbleSortV1(array, numNums);
+
+            gettimeofday(&stopTime, NULL);
+
+            start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+            stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+            //run time is determined using the start time and end time
+            diff = stop - start;
+
+            //output results
+            cout << "Bubble Sort Results: " << endl;
+
+            cout << "n = " << numNums << ", sort = 1 (bubble sort)" << ", if frequency= " << i_cnt << ", elements moved= " << m_cnt << endl << "time= " << setprecision(10) << diff << " seconds" << endl;
+
+            outputArray(array, numNums);
+
+        }
+
+        // MERGE SORT
+        else if (typeSort == 2)
+        {
+            gettimeofday(&startTime, NULL);
+
+            // merge sort
+            mergeSort(array, 0, numNums-1);
+
+            gettimeofday(&stopTime, NULL);
+
+                                                                                                                                                          123,0-1       38%
+
+
+            start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+            stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+            //run time is determined using the start time and end time
+            diff = stop - start;
+
+            //output results
+            cout << "Merge Sort Results: " << endl;
+
+            cout << "n = " << numNums << ", sort = 2 (merge sort)" << ", recursive calls= " << r_cnt << ", elements moved= " << m_cnt << endl << "time= " << setprecision(10) << diff << " seconds" << endl;
+
+            outputArray(array, numNums);
+        }
+
+}
+
+//function to output the array
+//prompts the user if they would like the sorted list output
+//if "yes" then this function outputs the contents of the array
+void outputArray(int array[], int numNums)
+{
+
+    string input;
+    cout << "Output the sorted list (yes/no)? ";
+    cin >> input;
+
+    if (input == "yes")
+    {
+        // output the array
+        for (int i = 0; i < numNums; i++)
+        {
+            cout << array[i] << " ";
+        }
+        cout << endl;
+    }
+}
+
+//function to perform bubble sort version 1
+void bubbleSortV1(int array[], int numNums)
+{   for (int i = 0; i < (numNums - 1); i++)
+   {
+      for (int j = 0; j < (numNums - 1); j++)
+      {
+         i_cnt++; //count number of ifs
+
+         if (array[j] > array[j + 1])
+            swap(array[j], array[j + 1]);
+      }
+    }
+}
+
+//function to perform mergeSort (recursive)
+void mergeSort(int array[], int left, int right)
+{
+//   i_cnt++; //count number of ifs
+
+   int mid;
+   if (left < right)
+   {
+       mid = (left + right)/2;
+       r_cnt++; //count number of times MergeSort is called recursively
+       mergeSort(array, left, mid);
+       r_cnt++; //count number of times MergeSort is called recursively
+       mergeSort(array, (mid+1), right);
+       merge(array, left, mid, right);
+   }
+}
+
+//function merge used in recursive function mergeSort
+void merge(int x[], int left, int mid, int right)
+{
+   int T [MAX];
+   int l1 = left;
+   int r1 = mid;
+   int l2 = mid+1;
+   int r2 = right;
+   int n = left;
+
+   while (l1 <= r1 && l2 <= r2)
+   {
+       if (x[l1] < x[l2])
+       {
+           m_cnt++;
+           T[n] = x[l1];
+           n++;
+           l1++;
+       }
+
+       else
+       {
+           m_cnt++;
+           T[n] = x[l2];
+           n++;
+           l2++;
+       }
+   }
+
+   while (l1 <= r1)
+   {
+       m_cnt++;
+       T[n] = x[l1];
+       n++;
+       l1++;
+    }
+
+    while(l2<= r2)
+    {
+       m_cnt++;
+       T[n] = x[l2];
+       n++;
+       l2++;
+    }
+
+    for (int i = left; i <= right; i++)
+    {
+        m_cnt++;
+        x[i] = T[i];
+    }
+}
+
+//function swap used in bubble sorting function
+void swap (int &a, int &b)
+{
+   int temp;
+   temp = a;
+   a = b;
+   b = temp;
+
+   m_cnt= m_cnt + 3;
+}
+
+                                                                                                                                                          256,0-1       Bo
