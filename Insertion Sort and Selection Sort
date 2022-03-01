@@ -1,0 +1,92 @@
+/*
+Kevin Sampson 
+Insertion Sort and Selection Sort 
+
+This code should be copied and pasted to the main program. The variables and functions will work with the agreed variables which are in Caitlin's file. 
+I left a comment where there is action needed, for example on line 16, there is a comment saying to insert the number of where the sort will be put in the list.
+*/
+       // this is inserted before the main
+       
+      // prototypes for insertion and selection sort 
+  void insertionSort(int array[], int numNums);
+  void selectionSort(int array[], int numNums);
+  
+  
+       // This is inserted in the main 
+  
+        // Insertion Sort 
+  
+    if (typeSort == ' ')// insert the number of where this sort falls in the list 
+    {
+       gettimeofday(&startTime, NULL);
+       insertionSort(array[], numNums);
+       gettimeofday(&stopTime, NULL);
+       start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+       stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+  
+       //run time is determined using the start time and end time
+  
+       diff = stop - start;
+  
+              //output results
+       cout << "Insertion Sort Results: " << endl;
+       cout << "n = " << numNums << ", sort = ' ' (Insertion Sort)" << ", if frequency= " << i_cnt << ", elements moved= " << m_cnt << endl << "time= " << setprecision(10) << diff << " seconds" << endl;         outputArray(array, numNums);
+    }
+  
+                      // Selection Sort
+  
+   if (typeSort == ' ')// insert the number of where this sort falls in the list 
+   {
+       gettimeofday(&startTime, NULL);
+       selectionSort(array[], numNums);
+       gettimeofday(&stopTime, NULL);
+       start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+       stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+  
+       //run time is determined using the start time and end time
+  
+       diff = stop - start;
+ 
+              //output results
+      cout << "Selection Sort Results: " << endl;
+      cout << "n = " << numNums << ", sort = ' ' (Selection Sort)" << ", if frequency= " << i_cnt << ", elements moved= " << m_cnt << endl << "time= " << setprecision(10) << diff << " seconds" << endl;         outputArray(array, numNums);
+   }
+  
+             // function code, this is inserted after the main 
+            
+             //selection sort code
+   void selectionSort(int array[], int numNums)
+    {
+        int i, j, min;
+ 
+        // One by one move boundary of unsorted subarray 
+        for (i = 0; i < numNums-1; i++)
+        {
+           // Find the minimum element in unsorted array 
+            min = i;
+            for (j = i+1; j < numNums; j++)
+            if (array[j] < array[min])
+                min = j;
+ 
+  
+           // Swap the found minimum element with the first element 
+           swap(&array[min], &array[i]);
+       }
+     }
+              //insertion code 
+  void insertionSort(int array[], int numNums)
+  {
+     int i,k, j;
+     for (i = 1; i < numNums; i++)
+     {
+        k = array[i];
+        j = i - 1;
+        while (j >= 0 && array[j] > k)
+       {
+             array[ j + 1] = array[j];
+            j = j -1;
+       }
+         array[j + 1] = k;
+     }
+   }                             
+ 
