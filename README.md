@@ -76,6 +76,33 @@ int main()
 
             outputArray(array, numNums);
          }
+else if (typeSort == 4)
+        {
+
+            gettimeofday(&startTime, NULL);
+
+            //Exchange Sort
+            exchangeSort(array, numNums);
+
+            gettimeofday(&stopTime, NULL);
+
+
+            start = startTime.tv_sec + (startTime.tc_usec / 1000000.0);
+            stop = stopTime.tv_sec + (stopTime.tv_usec / 1000000.0);
+
+
+            diff = stop - start;
+
+            //Output of exchange sort
+            cout << "Quick Sort Results: " << endl;
+
+            cout << "n = " << numNums << ", sort = 4 (quick sort), " << "if frequency = " << i_cnt << ", elements moved = " << m_cnt << ", number of quicksort calls: " << q_count << ", number of partition calls: " << p_cnt << endl;
+            cout << "time = " << setprecision(10) << diff << " seconds " << endl;
+
+            outputArray(array, numNums);
+         }
+      
+      
       
       
 //exchangesort function
@@ -110,3 +137,80 @@ void exchangeSort(int array[], int numNums)
         }// end outer for loop
 
 }// end exchange sort
+      
+      
+      
+
+long q_cnt = 0;  // used to count the number of times quicksort is called
+long p_cnt = 0; //used to count the number of times partition is called
+
+      
+      
+//Quick Sort function
+
+void quickSort(int array[],int low, int high, int numNums)
+{
+
+        int pivotpoint;
+        q_cnt++; // counts the number of calls of quick sort
+
+        if (high > low)
+        {
+                partition(low, high, pivotpoint);
+                p_cnt++; //counts of the number of partition calls
+
+                quickSort(low, pivotpoint - 1);
+                q_cnt++; // counts the number of calls of quickSort
+
+                quickSort(pivotpoint + 1, high);
+                q_cnt++; // counts the number of calls of quickSort
+
+        }// end if statement
+
+
+}// end quick sort
+      
+      
+ void partition(int low, int high, int &pivotpoint)
+{
+        int i, i;
+
+        int pivotitem, temp;
+
+        pivotitem = array[low];
+
+        j = low;
+
+        for (i = low + 1; i <= high; ++)
+        {
+                i_cnt++; // counts number of if
+                if (array[i] < pivotitem)
+                {
+                        j++;
+
+                        //Exchange array[i] and array[j]
+                        temp = array[i];
+                        array[i] = array[j];
+                        m_cnt++;
+
+                        array[j] = temp;
+                        m_cnt++;
+
+                }//end if statement
+
+                //Exchange array[low] and array[pivotpoint]
+                pivotpoint = j;
+                pivotitem = array[low];
+                m_cnt++;
+
+                array[low] = array[pivotpoint];
+                m_cnt++;
+
+        }// end for loop
+
+}// end partition
+
+ 
+      
+      
+      
