@@ -142,33 +142,6 @@ void sort(int typeSort, int numNums, int array[])
             outputArray(array, numNums);
         }
         
-        //EXCHANGE SORT
-        else if (typeSort == 3)
-        {
-
-            gettimeofday(&startTime, NULL);
-
-            //Exchange Sort
-            exchangeSort(array, numNums);
-
-            gettimeofday(&stopTime, NULL);
-
-
-            start = startTime.tv_sec + (startTime.tc_usec / 1000000.0);
-            stop = stopTime.tv_sec + (stopTime.tv_usec / 1000000.0);
-
-
-            diff = stop - start;
-
-            //Output of exchange sort
-            cout << "Exchange Sort Results: " << endl;
-
-            cout << "n = " << numNums << ", sort = 3 (exchange sort), " << "if frequency = " << i_cnt << ", elements moved = " << m_cnt << endl;
-            cout << "time = " << setprecision(10) << diff << " seconds " << endl;
-
-            outputArray(array, numNums);
-         }
-
 }
 
 //function to output the array
