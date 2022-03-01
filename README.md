@@ -48,11 +48,41 @@ int main()
   
 --------------------------------- END RAFIK PART ------------------------------------
 
+      ---Carl: you can copy this else if part to paste into the main code directly
+      
+//EXCHANGE SORT
+        else if (typeSort == 3)
+        {
+
+            gettimeofday(&startTime, NULL);
+
+            //Exchange Sort
+            exchangeSort(array, numNums);
+
+            gettimeofday(&stopTime, NULL);
+
+
+            start = startTime.tv_sec + (startTime.tc_usec / 1000000.0);
+            stop = stopTime.tv_sec + (stopTime.tv_usec / 1000000.0);
+
+
+            diff = stop - start;
+
+            //Output of exchange sort
+            cout << "Exchange Sort Results: " << endl;
+
+            cout << "n = " << numNums << ", sort = 3 (exchange sort), " << "if frequency = " << i_cnt << ", elements moved = " << m_cnt << endl;
+            cout << "time = " << setprecision(10) << diff << " seconds " << endl;
+
+            outputArray(array, numNums);
+         }
       
       
 //exchangesort function
+      
 void exchangeSort(int array[], int numNums)
 {
+      
         int temp;// variable to hold the temporary value of the current array slot before it gets swapped with the next value
 
         for (int i = 0; i < numNums; i++)
