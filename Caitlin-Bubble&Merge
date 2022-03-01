@@ -52,9 +52,11 @@ int main()
     // user is prompted for type of sort to analyze
     /* 1-bubble sort version 1
        2-merge sort
+       3- Exchange Sort
+       4- Quick Sort
     */
        cout << endl << endl;
-       cout << "Type of sort to analyze: " << endl << "(1)Bubble Sort (2)Merge Sort" << endl;
+       cout << "Type of sort to analyze: " << endl << "(1)Bubble Sort (2)Merge Sort (3)Exchange Sort (4)Quick Sort" << endl;
        cin >> typeSort;
        cout << endl;
 
@@ -139,6 +141,33 @@ void sort(int typeSort, int numNums, int array[])
 
             outputArray(array, numNums);
         }
+        
+        //EXCHANGE SORT
+        else if (typeSort == 3)
+        {
+
+            gettimeofday(&startTime, NULL);
+
+            //Exchange Sort
+            exchangeSort(array, numNums);
+
+            gettimeofday(&stopTime, NULL);
+
+
+            start = startTime.tv_sec + (startTime.tc_usec / 1000000.0);
+            stop = stopTime.tv_sec + (stopTime.tv_usec / 1000000.0);
+
+
+            diff = stop - start;
+
+            //Output of exchange sort
+            cout << "Exchange Sort Results: " << endl;
+
+            cout << "n = " << numNums << ", sort = 3 (exchange sort), " << "if frequency = " << i_cnt << ", elements moved = " << m_cnt << endl;
+            cout << "time = " << setprecision(10) << diff << " seconds " << endl;
+
+            outputArray(array, numNums);
+         }
 
 }
 
@@ -257,4 +286,7 @@ void swap (int &a, int &b)
    m_cnt= m_cnt + 3;
 }
 
-                                                                                                                                                          256,0-1       Bo
+
+
+
+256,0-1       Bo
