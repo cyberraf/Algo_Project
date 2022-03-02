@@ -1,56 +1,11 @@
 # Algo_Project
--------------- Rafik Working on this part -------
-
-#include <iostream>
-#include <fstream>
-
-using namespace std;
-
-
-int main()
-{
-
-   ifstream inFile;
-   string filename;
-
-   cout << "Enter the name of the dataset (almostS, randomS, reverseS, or duplicates): " << endl;
-   cin >> filename;
-
-   inFile.open(filename);
-
-   if (inFile.fail())
-   {
-       cerr <<"No such file!" << endl;
-       exit(1);
-   }// end if statement
-
-   int MAX  = 1000000;//1 TRILLION
-
-   int numToSort;
-   int array[MAX];
-
-   cout << "Enter the number of randomnumbers to process (sort) <= 100,000: " << endl;
-   cin >> numToSort;
-
-   int algNum;
-
-   cout <<"Enter the name of the algorithm you want to test:  ";
-   cin >> algNum;
-   cout << endl;
-
-   //Load the data until numToSort
-   for(int i = 0; i <= numToSort; i++)
-       inFile >> array[i];
-
-   inFile.close();
-
-}//end of main
-  
---------------------------------- END RAFIK PART ------------------------------------
 
       ---Carl: you can copy this else if part to paste into the main code directly
       
 //EXCHANGE SORT
+
+---------------------- Code for choosing Exchange Sort --------------------------------------------
+
         else if (typeSort == 3)
         {
 
@@ -76,6 +31,14 @@ int main()
 
             outputArray(array, numNums);
          }
+         
+---------------------  End Code for choosing Exchange Sort --------------------------------------------
+
+
+
+
+--------------------  Code for Chossing  Quick Sort -----------------------------------------------------
+
 else if (typeSort == 4)
         {
 
@@ -102,11 +65,13 @@ else if (typeSort == 4)
             outputArray(array, numNums);
          }
       
+--------------------------------- End Code for Choosing Quick Sort -------------------------------------------------
+
+
+
+-------------------------------- Code for Exchange Sort  function ---------------------------------------------
       
-      
-      
-//exchangesort function
-      
+//exchangesort function      
 void exchangeSort(int array[], int numNums)
 {
       
@@ -138,14 +103,18 @@ void exchangeSort(int array[], int numNums)
 
 }// end exchange sort
       
-      
-      
+------------------------------ End Code for Exchange Sort function --------------------------------------------------------------
 
+
+
+------------------------------ Code for Quick Sort Function -------------------------------------------------------------------
+
+long i_cnt = 0;  // used to count the number of times an "if" statement is executed
+long m_cnt = 0;  // used to count the number of times an element is moved somewhere
 long q_cnt = 0;  // used to count the number of times quicksort is called
 long p_cnt = 0; //used to count the number of times partition is called
 
-      
-      
+
 //Quick Sort function
 
 void quickSort(int array[],int low, int high, int numNums)
@@ -156,13 +125,13 @@ void quickSort(int array[],int low, int high, int numNums)
 
         if (high > low)
         {
-                partition(low, high, pivotpoint);
+                partition(array, low, high, pivotpoint);
                 p_cnt++; //counts of the number of partition calls
 
-                quickSort(low, pivotpoint - 1);
+                quickSort(array, low, pivotpoint - 1, numNums);
                 q_cnt++; // counts the number of calls of quickSort
 
-                quickSort(pivotpoint + 1, high);
+                quickSort(array, pivotpoint + 1, high, numNums);
                 q_cnt++; // counts the number of calls of quickSort
 
         }// end if statement
@@ -170,18 +139,24 @@ void quickSort(int array[],int low, int high, int numNums)
 
 }// end quick sort
       
-      
- void partition(int low, int high, int &pivotpoint)
-{
-        int i, i;
+-------------------------- End Code for Quick Sort ----------------------------------------------------------------------
 
-        int pivotitem, temp;
+
+
+------------------------- Code for Partition --------------------------------------------------------------------------
+
+void partition(int array[], int low, int high, int& pivotpoint)
+{
+        int i, j;
+
+        int pivotitem;
+        int  temp;
 
         pivotitem = array[low];
 
         j = low;
 
-        for (i = low + 1; i <= high; ++)
+        for (i = low + 1; i <= high; i++)
         {
                 i_cnt++; // counts number of if
                 if (array[i] < pivotitem)
@@ -191,26 +166,23 @@ void quickSort(int array[],int low, int high, int numNums)
                         //Exchange array[i] and array[j]
                         temp = array[i];
                         array[i] = array[j];
-                        m_cnt++;
+                        m_cnt++;//increment count for moved item
 
                         array[j] = temp;
-                        m_cnt++;
+                        m_cnt++;//increment count for moved item
 
                 }//end if statement
 
                 //Exchange array[low] and array[pivotpoint]
                 pivotpoint = j;
                 pivotitem = array[low];
-                m_cnt++;
+                m_cnt++;//increment count for moved item
 
                 array[low] = array[pivotpoint];
-                m_cnt++;
+                m_cnt++;//increment count for moved item
 
         }// end for loop
 
 }// end partition
-
- 
       
-      
-      
+------------------------------ End Code for  Partition function ----------------------------------------
