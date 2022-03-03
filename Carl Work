@@ -1,38 +1,57 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
+#include <sys/time.h>
 
 using namespace std;
+
+// Global variables
+timeval startTime, stopTime;
+double start, stop, diff;
+long i_cnt = 0, r_cnt = 0, m_cnt = 0;
+long q_cnt = 0; // used to count the number of times quicksort is called
+long p_cnt = 0; //used to count the number of times partition is called
+long h_cnt = 0; // used to count the number of times heapify is called
+int MAX = 1000000;
 
 // Prototypes
 void printArray(int[], int);
 void randomArray(int[], int);
+void swap(int, int, int[]);
 void writeArray(ofstream&, int[], int);
 void almostSort(ofstream&, int[], int);
 void randomSort(ofstream&, int[], int);
 void reverseSort(ofstream&, int[], int);
 void duplicateSort(ofstream&, int[], int);
-void heapSort(int [], int);
-void heapify(int [], int, int);
+void heapSort(int[], int);
+void heapify(int[], int, int);
+void bubbleSortV1(int[], int);
+void mergeSort(int[], int, int);
+void merge(int[], int, int, int);
+void selectionSort(int[], int);
+void insertionSort(int[], int);
+void exchangeSort(int[], int);
+void quickSort(int[], int, int, int);
+void partition(int[], int, int, int&);
 
 int main()
 {
-   // -------------  Rafik's part:  --------------
    ifstream inFile;
-   int numToSort;
-   string algName, filename;
+   int numToSort, algType, dataSet;
 
    // Ask for length of data set
    cout << "Enter the number of randomnumbers to process (sort) <= 100,000: ";
    cin >> numToSort;
 
+   // Initializing array
    int array [numToSort];
-
+   
    // Can only be done in main function
    // Creating 4 .txt files with respective data
    ofstream almSort;
    almSort.open("almostS.txt");
-    almostSort(almSort, array, numToSort);
+   almostSort(almSort, array, numToSort);
    almSort.close();
 
    ofstream randSort;
@@ -51,23 +70,44 @@ int main()
    dupSort.close();
    //cout << "Done creating data set...\n\n";
 
-   cout << "\n(selection, exchange, bubble, insertion, merge, quick, heap)" << endl
-        << "Enter the name of the algorithm you want to test: ";
-   cin >> algName;
+   // TODO: Put into while loop to check for wrong input (if time permits)
+   // Asking for user input for type of sort
+   cout << "Type of sort to analyze:" << endl
+        << "(1)Selection Sort | (2)Exchange Sort | (3)Bubble Sort |" << endl
+        << "(4)Insertion Sort | (5)Merge Sort | (6)Quick Sort |" << endl
+        << "(7)Heap Sort" << endl;
+   cin >> algType;
    cout << endl;
 
-   cout << "(almostS, randomS, reverseS, or duplicates)" << endl
-        << "Enter the name of the dataset: ";
-   cin >> filename;
+   cout << "Type of dataset:" << endl
+        << "(1)Random Sort | (2)Reverse Sort | (3)Almost Sort | (4)Many Duplicates"
+        << endl;
+   cin >> dataSet;
    cout << endl;
-   
-   inFile.open(filename + ".txt");
 
+   // Opening file depending on type of dataset chosen
+   switch (dataSet){
+      case 1:
+         inFile.open("randomS.txt");
+         break;
+      case 2:
+         inFile.open("reverseS.txt");
+         break;
+      case 3:
+         inFile.open("almostS.txt");
+         break;
+      case 4:
+         inFile.open("duplicates.txt");
+         break;
+   }
+
+   /* UNNECESSARY CODE (CHANGED TO USE INTS INSTEAD OF STRINGS TO LIMIT CHOICES)
    if (inFile.fail())
    {
        cerr <<"No such file!" << endl;
        exit(1);
-   }// end if statement
+   }// end if statement */
+
 
    // Read in data set from respective .txt file
    int num;
@@ -75,42 +115,138 @@ int main()
       array[i] = num;
    }
 
-   cout << "Running " << algName << " sort..." << endl;
-   if (algName == "selection"){
-      // Call selection sort
-      cout << "selection sort called" << endl;
-   }
+   // Calls chosen sort
+   switch (algType){
+      case 1: // SELECTION SORT
+         gettimeofday(&startTime, NULL);
+         selectionSort(array, numToSort);
+         gettimeofday(&stopTime, NULL);
 
-   else if (algName == "exchange"){
-      // Call exchange sort
-      cout << "exchange sort called" << endl;
-   }
+         start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+  
+         //run time is determined using the start time and end time
+         diff = stop - start;
 
-   else if (algName == "bubble"){
-      // Call bubble sort
-      cout << "bubble sort called" << endl;
-   }
-   
-   else if (algName == "merge"){
-      // Call merge sort
-      cout << "merge sort called" << endl;
-   }
+         //output results
+         cout << "Selection Sort Results: " << endl;
+         cout << "n = " << numToSort << ", if frequency = " << i_cnt
+              << ", swaps = " << m_cnt << endl 
+              << "time = " << setprecision(10) << diff << " seconds" << endl;
+         printArray(array, numToSort);
+         break;
+      case 2: // EXCHANGE SORT
+         gettimeofday(&startTime, NULL);
+         exchangeSort(array, numToSort);
+         gettimeofday(&stopTime, NULL);
 
-   else if (algName == "quick"){
-      // Call quick sort
-      cout << "quick sort called" << endl;
+         start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+         //run time is determined using the start time and end time
+         diff = stop - start;
+
+         //output results
+         cout << "Exchange Sort Results: " << endl;
+         cout << "n = " << numToSort << ", if frequency = " << i_cnt
+              << ", swaps = " << m_cnt << endl
+              << "time = " << setprecision(10) << diff << " seconds" << endl;
+         printArray(array, numToSort); 
+         break;
+      case 3: // BUBBLE SORT
+         gettimeofday(&startTime, NULL);
+         bubbleSortV1(array, numToSort);
+         gettimeofday(&stopTime, NULL);
+
+         start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+         //run time is determined using the start time and end time
+         diff = stop - start;
+
+         //output results
+         cout << "Bubble Sort Results: " << endl
+              << "n = " << numToSort << ", if frequency = " << i_cnt
+              << ", swaps = " << m_cnt << endl 
+              << "time = " << setprecision(10) << diff << " seconds" << endl;
+         printArray(array, numToSort);
+         break;
+      case 4: // INSERTION SORT
+         gettimeofday(&startTime, NULL);
+         insertionSort(array, numToSort);
+         gettimeofday(&stopTime, NULL);
+
+         start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+         //run time is determined using the start time and end time
+         diff = stop - start;
+
+         //output results
+         cout << "Insertion Sort Results: " << endl
+              << "n = " << numToSort << ", if frequency = " << i_cnt
+              << ", swaps = " << m_cnt << endl
+              << "time = " << setprecision(10) << diff << " seconds" << endl;
+         printArray(array, numToSort);
+         break;
+      case 5: // MERGE SORT
+         gettimeofday(&startTime, NULL);
+         mergeSort(array, 0, numToSort - 1);
+         gettimeofday(&stopTime, NULL);
+
+         start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+         //run time is determined using the start time and end time
+         diff = stop - start;
+
+         //output results
+         cout << "Merge Sort Results: " << endl
+              << "n = " << numToSort << ", recursive calls = " << r_cnt
+              << ", swaps = " << m_cnt << endl
+              << "time = " << setprecision(10) << diff << " seconds" << endl;
+         printArray(array, numToSort);
+         break;
+      case 6: // QUICK SORT
+         gettimeofday(&startTime, NULL);
+         quickSort(array, 0, numToSort-1, numToSort);
+         gettimeofday(&stopTime, NULL);
+
+         start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+         //run time is determined using the start time and end time
+         diff = stop - start;
+
+         //output results
+         cout << "Quick Sort Results: " << endl
+              << "n = " << numToSort << ", recursive calls = " << q_cnt
+              << ", partition calls = " << q_cnt << ", swaps = " << m_cnt << endl
+              << "time = " << setprecision(10) << diff << " seconds" << endl;
+         printArray(array, numToSort);
+         break;
+      case 7: // HEAP SORT
+         gettimeofday(&startTime, NULL);
+         heapSort(array, numToSort); // Print time & # of basic operations
+         gettimeofday(&stopTime, NULL);
+
+         start = startTime.tv_sec + (startTime.tv_usec/1000000.0);
+         stop = stopTime.tv_sec + (stopTime.tv_usec/1000000.0);
+
+         //run time is determined using the start time and end time
+         diff = stop - start;
+
+         //output results
+         cout << "Heap Sort Results: " << endl
+              << "n = " << numToSort << ", if frequency = " << i_cnt
+              << ", swaps = " << m_cnt << ", heapify calls = " << h_cnt << endl 
+              << "time = " << setprecision(10) << diff << " seconds" << endl;
+         printArray(array, numToSort);
+         break;
    }
-
-   else if (algName == "heap"){
-      // Call heap sort
-      heapSort(array, numToSort); // TODO: Print time & # of basic operations
-
-      // Printing array
-      printArray(array, numToSort);
-   }
-
+ 
    cout << endl;
-   inFile.close();
+   inFile.close();   
 
    return 0;
 }// end of main
@@ -146,7 +282,18 @@ void randomArray(int array[], int len)
    }
 }
 
-/* _________  SORT CODE  ___________ */
+//function swap used in bubble sorting function
+void swap (int &a, int &b)
+{
+   int temp;
+   temp = a;
+   a = b;
+   b = temp;
+
+   m_cnt= m_cnt + 3;
+}
+
+/* ------------  DATASET CODE  ------------- */
 // ALMOST SORTED CODE
 void almostSort(ofstream &OutputFile, int array[], int len)
 {
@@ -154,15 +301,13 @@ void almostSort(ofstream &OutputFile, int array[], int len)
    int numRandSwitch = 4; // TODO: Make const global variable
 
    randomArray(array, len);
-
+   
    // TODO: Change this to a more efficient type of sort
    // Make it sorted first (using bubble sort for now)
    for (int i = 0; i < len; i++){
       for (int j = 0; j < len - i - 1; j++){
          if (array[j] > array[j+1]){
-            int temp = array[j];
-            array[j] = array[j+1];
-            array[j+1] = temp;
+             swap(array[j], array[j + 1]);
          }
       }
    }
@@ -178,9 +323,7 @@ void almostSort(ofstream &OutputFile, int array[], int len)
       }
 
       if (!(i % 2 == 0)){
-         int temp = array[prevElement];
-         array[prevElement] = array[currElement];
-         array[currElement] = temp;
+         swap(array[prevElement], array[currElement]);
       }
 
       else {
@@ -202,21 +345,19 @@ void randomSort(ofstream &OutputFile, int array[], int len)
 // REVERSE SORT CODE
 void reverseSort(ofstream &OutputFile, int array[], int len)
 {
-   randomArray(array, len);
-
+   randomArray(array, len); 
+   
    // TODO: Change this to a more efficient type of sort
    // Make it sorted first (using bubble sort for now)
    for (int i = 0; i < len; i++){
       for (int j = 0; j < len - i - 1; j++){
          if (array[j] > array[j+1]){
-            int temp = array[j];
-            array[j] = array[j+1];
-            array[j+1] = temp;
+            swap(array[j], array[j + 1]);
          }
       }
    }
 
-   int start = 0, end = len - 1;
+   int start = 0, end = len - 1;   
 
    // TODO: Make more concise or make a new function if necessary
    // Reverses current array
@@ -232,23 +373,242 @@ void reverseSort(ofstream &OutputFile, int array[], int len)
    writeArray(OutputFile, array, len); // Writes now reversed array onto .txt file
 }
 
+// DUPLICATE SORT CODE
 void duplicateSort(ofstream &OutputFile, int array[], int len)
 {
    // Random array code: (edited)
-   //srand(time(0));
-   for (int i = 0; i < len; i++){
+   srand(time(0));
+   int i, j;
+   for (i = 0; i < len; i++){
       int numRand = rand() % len;
       int numDup = rand() % (int)(len * 0.1); // TODO: Turn into const global variable
-      for (int j = 0; j < numDup; j++){ //
+      for (j = i; j < i + numDup; j++){ // 
          array[j] = numRand;
-         i++;
       }
+      i = j;
    }
 
    writeArray(OutputFile, array, len);
 }
 
+// ----------  START OF ALGORITHM CODE ----------- //
 
+// TODO: Add in i_cnts & m_cnts
+// SELECTION SORT CODE
+void selectionSort(int array[], int numNums)
+{
+   int i, j, min;
+ 
+   // One by one move boundary sof unsorted subarray 
+   for (i = 0; i < numNums-1; i++)
+   {
+      // Find the minimum element in unsorted array 
+      min = i;
+      for (j = i+1; j < numNums; j++)
+         if (array[j] < array[min])
+            min = j;
+
+       // Swap the found minimum element with the first element 
+       swap(array[min], array[i]);
+   }
+}
+
+// EXCHANGE SORT CODE
+void exchangeSort(int array[], int numNums) {
+    int temp;// variable to hold the temporary value of the current 
+             // array slot before it gets swapped with the next value
+
+    for (int i = 0; i < numNums; i++)
+    {
+            for (int j = i + 1; j < numNums; j++)
+            {
+                    i_cnt++; //count number of ifs
+
+                    if (array[j] < array[i])
+                    {
+                            //i_cnt++; //count number of ifs
+
+                            temp = array[i];// holds the value of array[i] temporally
+
+                            array[i] = array[j];
+                            m_cnt++; // array[j] value is moved to array[i]
+
+                            array[j] = temp;
+                            m_cnt++;// temp value is moved to array[j]
+
+                    }// end if statement
+
+            }// end inner for loop
+
+    }// end outer for loop
+
+}// end exchange sort
+
+// BUBBLE SORT CODE
+//function to perform bubble sort version 1
+void bubbleSortV1(int array[], int numNums)
+{   for (int i = 0; i < (numNums - 1); i++)
+   {
+      for (int j = 0; j < (numNums - 1); j++)
+      {
+         i_cnt++; //count number of ifs
+
+         if (array[j] > array[j + 1])
+            swap(array[j], array[j + 1]);
+      }
+    }
+}
+
+// TODO: Add in i_cnts & m_cnts
+// INSERTION SORT CODE
+void insertionSort(int array[], int numNums)
+{
+   int i,k,j;
+   for (i = 1; i < numNums; i++)
+   {
+      k = array[i];
+      j = i - 1;
+
+      while (j >= 0 && array[j] > k)
+      {
+         array[j + 1] = array[j];
+         j = j - 1;
+      }
+
+      array[j + 1] = k;
+   }
+}
+
+// MERGE SORT CODE
+//function to perform mergeSort (recursive)
+void mergeSort(int array[], int left, int right)
+{
+   i_cnt++; //count number of ifs
+
+   int mid;
+   if (left < right)
+   {
+       mid = (left + right)/2;
+       r_cnt++; //count number of times MergeSort is called recursively
+       mergeSort(array, left, mid);
+       r_cnt++; //count number of times MergeSort is called recursively
+       mergeSort(array, (mid+1), right);
+       merge(array, left, mid, right);
+   }
+}
+
+// MERGE SORT CODE
+//function merge used in recursive function mergeSort
+void merge(int x[], int left, int mid, int right)
+{
+   int T [MAX];
+   int l1 = left;
+   int r1 = mid;
+   int l2 = mid+1;
+   int r2 = right;
+   int n = left;
+
+   while (l1 <= r1 && l2 <= r2)
+   {
+       if (x[l1] < x[l2])
+       {
+           m_cnt++;
+           T[n] = x[l1];
+           n++;
+           l1++;
+       }
+
+       else
+       {
+           m_cnt++;
+           T[n] = x[l2];
+           n++;
+           l2++;
+       }
+   }
+
+   while (l1 <= r1)
+   {
+       m_cnt++;
+       T[n] = x[l1];
+       n++;
+       l1++;
+    }
+
+    while(l2<= r2)
+    {
+       m_cnt++;
+       T[n] = x[l2];
+       n++;
+       l2++;
+    }
+
+    for (int i = left; i <= right; i++)
+    {
+        m_cnt++;
+        x[i] = T[i];
+    }
+}
+
+
+// QUICK SORT CODE
+void quickSort(int array[], int low, int high, int numNums) {
+
+    int pivotpoint;
+    q_cnt++; // counts the number of calls of quick sort
+
+    if (high > low)
+    {
+            partition(array, low, high, pivotpoint);
+            p_cnt++; //counts of the number of partition calls
+
+            quickSort(array, low, pivotpoint - 1, numNums);
+            q_cnt++; // counts the number of calls of quickSort
+
+            quickSort(array, pivotpoint + 1, high, numNums);
+            q_cnt++; // counts the number of calls of quickSort
+
+    }// end if statement
+}// end quick sort
+
+// QUICK SORT CODE
+void partition(int array[], int low, int high, int &pivotpoint) { 
+   int i, j, pivotitem, temp;
+
+   pivotitem = array[low];
+
+   j = low;
+
+   for (i = low + 1; i <= high; i++)
+   {
+      i_cnt++; // counts number of if
+      if (array[i] < pivotitem)
+      {
+         j++;
+
+         //Exchange array[i] and array[j]
+         temp = array[i];
+         array[i] = array[j];
+         m_cnt++;
+
+         array[j] = temp;
+         m_cnt++;
+
+      }//end if statement
+
+      //Exchange array[low] and array[pivotpoint]
+      pivotpoint = j;
+      pivotitem = array[low];
+      m_cnt++;
+
+      array[low] = array[pivotpoint];
+      m_cnt++;
+
+   }// end for loop
+}// end partition
+
+
+// HEAP SORT CODE
 // To heapify a subtree rooted with node i which is
 // an index in arr[]. n is size of heap
 void heapify(int arr[], int n, int i)
@@ -256,37 +616,45 @@ void heapify(int arr[], int n, int i)
     int largest = i; // Initialize largest as root
     int l = 2 * i + 1; // left = 2*i + 1
     int r = 2 * i + 2; // right = 2*i + 2
-
+ 
     // If left child is larger than root
+    i_cnt++;
     if (l < n && arr[l] > arr[largest])
         largest = l;
-
+ 
     // If right child is larger than largest so far
+    i_cnt++;
     if (r < n && arr[r] > arr[largest])
         largest = r;
-
+ 
     // If largest is not root
+    i_cnt++;
     if (largest != i) {
         swap(arr[i], arr[largest]);
-
+ 
         // Recursively heapify the affected sub-tree
+        h_cnt++;
         heapify(arr, n, largest);
     }
 }
 
+// HEAP SORT CODE
 // main function to do heap sort
 void heapSort(int arr[], int n)
 {
     // Build heap (rearrange array)
-    for (int i = n / 2 - 1; i >= 0; i--)
+    for (int i = n / 2 - 1; i >= 0; i--){
+        h_cnt++;
         heapify(arr, n, i);
-
+    }
+ 
     // One by one extract an element from heap
     for (int i = n - 1; i > 0; i--) {
         // Move current root to end
         swap(arr[0], arr[i]);
-
+ 
         // call max heapify on the reduced heap
+        h_cnt++;
         heapify(arr, i, 0);
     }
 }
