@@ -405,6 +405,7 @@ void selectionSort(int array[], int numNums)
       // Find the minimum element in unsorted array 
       min = i;
       for (j = i+1; j < numNums; j++)
+         i_cnt++; //counts number of if
          if (array[j] < array[min])
             min = j;
 
@@ -468,9 +469,10 @@ void insertionSort(int array[], int numNums)
    {
       k = array[i];
       j = i - 1;
-
+      i_cnt++;
       while (j >= 0 && array[j] > k)
       {
+         m_cnt++;
          array[j + 1] = array[j];
          j = j - 1;
       }
