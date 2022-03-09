@@ -33,12 +33,13 @@ void selectionSort(int[], int);
 void insertionSort(int[], int);
 void exchangeSort(int[], int);
 void quickSort(int[], int, int, int);
-int partition(int[], int, int, int&);  /*** Changed from a void function into a value returning function of type integer ***/
+int partition(int[], int, int, int&);
 
 int main()
 {
    ifstream inFile;
    int numToSort, algType, dataSet;
+   char quitVar = 'q';
 
    // Ask for length of data set
    cout << "Enter the number of randomnumbers to process (sort) <= 100,000: ";
@@ -70,6 +71,8 @@ int main()
    dupSort.close();
    //cout << "Done creating data set...\n\n";
 
+   while (true){
+
    // TODO: Put into while loop to check for wrong input (if time permits)
    // Asking for user input for type of sort
    cout << "Type of sort to analyze:" << endl
@@ -80,8 +83,8 @@ int main()
    cout << endl;
 
    cout << "Type of dataset:" << endl
-        << "(1)Random Sort | (2)Reverse Sort | (3)Almost Sort | (4)Many Duplicates"
-        << endl;
+        << "(1)Random Sort | (2)Reverse Sort | (3)Almost Sort" << endl
+        << "(4)Many Duplicates | (0) CUSTOM Dataset" << endl;
    cin >> dataSet;
    cout << endl;
 
@@ -98,16 +101,20 @@ int main()
          break;
       case 4:
          inFile.open("duplicates.txt");
+      case 0:
+         string fileName;
+         cout << "Enter the filename (include the .txt): ";
+         cin >> fileName;
+
+         inFile.open(fileName);
+         // copy and paste the code from rafik's past code
+         if (inFile.fail())
+         {
+            cerr << "No such file!" << endl;
+            exit(1);
+         }// end if statement
          break;
-   }
-
-   /* UNNECESSARY CODE (CHANGED TO USE INTS INSTEAD OF STRINGS TO LIMIT CHOICES)
-   if (inFile.fail())
-   {
-       cerr <<"No such file!" << endl;
-       exit(1);
-   }// end if statement */
-
+   } // end of switch statement
 
    // Read in data set from respective .txt file
    int num;
@@ -244,9 +251,19 @@ int main()
          printArray(array, numToSort);
          break;
    }
- 
-   cout << endl;
+   
    inFile.close();   
+ 
+   // Ask user for input to go back to beginning of while loop
+   cout << "\nWould you like to choose another algorithm? (y/n): ";
+   cin >> quitVar;
+
+   // If statement to take user out of program if letter "n" is chosen
+   if (quitVar == 'n'){
+      cout << "Quitting program...\n";
+      break;
+   } // end of if statement
+  } // end of while loop
 
    return 0;
 }// end of main
@@ -404,10 +421,11 @@ void selectionSort(int array[], int numNums)
    {
       // Find the minimum element in unsorted array 
       min = i;
-      for (j = i+1; j < numNums; j++)
+      for (j = i+1; j < numNums; j++){
          i_cnt++; //counts number of if
          if (array[j] < array[min])
             min = j;
+      }
 
        // Swap the found minimum element with the first element 
        swap(array[min], array[i]);
@@ -625,7 +643,6 @@ int partition(int array[], int low, int high, int& pivotpoint) {
       return pivotpoint;
 
 }// end partition
-
 
 // HEAP SORT CODE
 // To heapify a subtree rooted with node i which is
