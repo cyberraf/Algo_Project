@@ -33,7 +33,7 @@ void selectionSort(int[], int);
 void insertionSort(int[], int);
 void exchangeSort(int[], int);
 void quickSort(int[], int, int, int);
-void partition(int[], int, int, int&);
+int partition(int[], int, int, int&);  /*** Changed from a void function into a value returning function of type integer ***/
 
 int main()
 {
@@ -574,39 +574,56 @@ void quickSort(int array[], int low, int high, int numNums) {
 }// end quick sort
 
 // QUICK SORT CODE
-void partition(int array[], int low, int high, int &pivotpoint) { 
-   int i, j, pivotitem, temp;
+int partition(int array[], int low, int high, int& pivotpoint) {
+   int pivotitem;
 
    pivotitem = array[low];
 
-   j = low;
+   int j = low;
 
-   for (i = low + 1; i <= high; i++)
+   for (int i = low + 1; i <= high; i++)
    {
       i_cnt++; // counts number of if
-      if (array[i] < pivotitem)
+      if (array[i] <= pivotitem)
       {
          j++;
-
-         //Exchange array[i] and array[j]
-         temp = array[i];
-         array[i] = array[j];
-         m_cnt++;
-
-         array[j] = temp;
-         m_cnt++;
-
-      }//end if statement
-
-      //Exchange array[low] and array[pivotpoint]
-      pivotpoint = j;
-      pivotitem = array[low];
-      m_cnt++;
-
-      array[low] = array[pivotpoint];
-      m_cnt++;
-
+      }
    }// end for loop
+
+      //the correct position of the pivot item (its final position)
+      pivotpoint = j;
+
+      m_cnt++;
+      swap(array[low],array[pivotpoint]);
+      m_cnt++;
+
+      //sorting left and right parts of the pivot item
+      int i = low;
+      j = high;
+
+      while(i < pivotpoint && j > pivotpoint)
+      {
+                while(array[i] <= pivotitem)
+                {
+                        i++;
+                }//end inner while loop
+                while(array[j] > pivotitem)
+                {
+                        j--;
+                }//end inner while loop
+
+                if (i < pivotpoint && j > pivotpoint)
+                {
+                        m_cnt++;
+                        swap(array[i++], array[j--]);
+                        m_cnt++;
+
+                }// end if statement
+
+      }//end outter while loop
+
+      return pivotpoint;
+
 }// end partition
 
 
